@@ -6,7 +6,7 @@ Author: https://github.com/kommander
 Repo: https://github.com/kommander/vost
 
 ### Configuration
-A configuration file for the service is by default expected
+A configuration file for the service is by default expected at _vost/config.js_.
 <pre>
 module.exports = {
   hosts: [
