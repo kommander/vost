@@ -32,19 +32,19 @@ if(settings.debug === true){
   //
   // Handle target connection events
   vost.on('target:close', function(socket){
-    console.log('Target connection to ' + socket.targetObj.hostName + ' closed.');
+    console.log('Target connection to ' + socket.hostObj.hostName + ' closed.');
   });
   vost.on('target:end', function(socket){
-    console.log('Target connection to ' + socket.targetObj.hostName + ' ended.');
+    console.log('Target connection to ' + socket.hostObj.hostName + ' ended.');
   });
   vost.on('target:error', function(socket, err){
-    console.log('Target connection to ' + socket.targetObj.hostName + ' error:', err);
+    console.log('Target connection to ' + socket.hostObj.hostName + ' error:', err);
   });
   vost.on('target:timeout', function(socket){
-    console.log('Target connection to ' + socket.targetObj.hostName + ' timed out.');
+    console.log('Target connection to ' + socket.hostObj.hostName + ' timed out.');
   });
   vost.on('target:connect', function(socket){
-    console.log('Connection to ' + socket.targetObj.hostName + ' established.');
+    console.log('Connection to ' + socket.hostObj.hostName + ' established.');
   });
             
   //
