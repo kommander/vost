@@ -61,6 +61,11 @@ if(settings.debug === true){
   vost.on('client:error', function(socket){
     console.log('Client connection from', socket.address(), ' timed out.');
   });
+
+  // Host not found
+  vost.on('client:no-host', function(hostName){
+    console.log('Requested host not found:', hostName);
+  });
 }
 
 // Start Server
