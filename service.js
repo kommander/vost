@@ -67,53 +67,57 @@ var server = net.createServer(function(sock) {
       if(typeof targetHost !== 'undefined'){
 
         // Establish target connection to pipe through
-        var targetConnection = net.connect(targetHost[1], targetHost[0]);
+        var targetConnection = sock.targetConnection = net.connect(targetHost[1], targetHost[0]);
 
         // Handle closing target connection
-        targetConnection.on('close', function(){
-          console.log('target connection to ' + target + ' closed. (Reestablishing...)');
-          targetConnection.connect(targetHost[1], targetHost[0]);
-          // on error, close, timeout... retry a few times with timeout in between
+        sock.targetConnection.on('close', function(){
+          console.log('target connection to ' + target + ' closed.');
+        });
+        sock.targetConnection.on('end', function(){
+          console.log('target connection to ' + target + ' ended.');
+        });
+        sock.targetConnection.on('error', function(err){
+          console.log('target connection ' + target + ' error:', err);
+          this.connect(targetHost[1], targetHost[0]);
+          // on error, timeout... retry a few times with timeout in between
           // let the timeout grow, after settings.dieTimeout mark the server as dead
           // and send an E-Mail if setup that the service died
         });
-        targetConnection.on('error', function(err){
-          console.log('target connection ' + target + ' error:', err);
-          targetConnection.connect(targetHost[1], targetHost[0]);
-        });
-        targetConnection.on('timeout', function(){
+        sock.targetConnection.on('timeout', function(){
           console.log('target connection ' + target + ' timeout.');
-          targetConnection.connect(targetHost[1], targetHost[0]);
+          this.connect(targetHost[1], targetHost[0]);
         });
 
         // Handle closing client connection
         sock.on('close', function(){
+          console.log('client connection closed');
           // Close target connection
-          targetConnection.destroy();
+          this.targetConnection.destroy();
         });
 
         // Handle error on client connection
         sock.on('error', function(){
           // Close target connection
-          targetConnection.destroy();
+          this.targetConnection.destroy();
         });
 
         // Handle timed out client connection
         sock.on('timeout', function(){
+          console.log('client connection timed out');
           // Close target connection
-          targetConnection.destroy();
+          this.targetConnection.destroy();
         });
 
         // Pipe on target connected
-        targetConnection.on('connect', function(err){
+        sock.targetConnection.on('connect', function(err){
           console.log('Connection to ' + target + ' established.');
-          sock.pipe(targetConnection);
-          targetConnection.pipe(sock);
+          sock.pipe(sock.targetConnection);
+          sock.targetConnection.pipe(sock);
         });
 
         // Forward initial request
-        if(!targetConnection.connecting){
-          targetConnection.write(data);
+        if(!sock.targetConnection.connecting){
+          sock.targetConnection.write(data);
         }
       }
     }
