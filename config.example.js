@@ -30,5 +30,8 @@ module.exports = {
     password: '',
     from: ''
   },
-  mailOnHostDown: ['name1@domain.com', 'name2@domain.com']
+  mailOnHostDown: {
+    to: ['arcus.node@gmail.com', 'hasta84@gmail.com'],
+    subject: 'Test server down'
+  }
 };
