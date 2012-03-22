@@ -84,6 +84,30 @@ vost.on('host:not-found', function(hostName){
 // Host down
 vost.on('host:down', function(hostObj){
   logger.warn('Host ' + hostObj.hostName + ':' + hostObj.port + ' down.');
+
+  // Send out E-Mail if setup
+  if(settings.mailOnHostDown){
+
+    var body = 'The target host ' + hostObj.hostName + ':' + hostObj.port + ' is down.';
+
+    mailer.send({
+      host : settings.mail.host,
+      port : settings.mail.port, 
+      ssl: settings.mail.ssl,
+      domain : "localhost", 
+      to : settings.mailOnHostDown.to.join(','),
+      from : settings.mail.from,
+      subject : settings.mailOnHostDown.subject || 'Vost: Virtual Host Down',
+      body: body,
+      authentication : "login", 
+      username : settings.mail.username,
+      password : settings.mail.password
+    }, function(err){
+      if(err)
+        logger.error(err);
+    });
+  }
+
 });
 
 // Output memory stats every now and then
