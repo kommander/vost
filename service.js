@@ -15,70 +15,76 @@ var Helper = require('./lib/helper.js');
 // Default settings
 var settings = {
   port: 80,
-  debug: false
+  logLevel: 'debug',
+  logFile: null,
+  traceMemory: false,
+  traceMemoryInterval: 1000
 };
 
 // Load settings
 if(Path.existsSync(__dirname + '/config.js')){
   var fileSettings = require(__dirname + '/config.js');
   Helper.mergeObjects(settings, fileSettings);
-} 
+}
+
+// Create Logger isntance
+var logger = require('./lib/logger.js').createLogger(settings.logFile, settings.logLevel);
 
 // Create a vost instance
 var vost = new Vost(settings);
 
 // Create Debug output if wanted
-if(settings.debug === true){
+if(settings.logLevel === 'debug'){
   //
   // Handle target connection events
   vost.on('target:close', function(socket){
-    console.log('Target connection to ' + socket.hostObj.hostName + ' closed.');
+    logger.debug('Target connection to ' + socket.hostObj.hostName + ' closed.');
   });
   vost.on('target:end', function(socket){
-    console.log('Target connection to ' + socket.hostObj.hostName + ' ended.');
+    logger.debug('Target connection to ' + socket.hostObj.hostName + ' ended.');
   });
   vost.on('target:error', function(socket, err){
-    console.log('Target connection to ' + socket.hostObj.hostName + ' error:', err);
+    logger.debug('Target connection to ' + socket.hostObj.hostName + ' error:', err);
   });
   vost.on('target:timeout', function(socket){
-    console.log('Target connection to ' + socket.hostObj.hostName + ' timed out.');
+    logger.debug('Target connection to ' + socket.hostObj.hostName + ' timed out.');
   });
   vost.on('target:connect', function(socket){
-    console.log('Connection to ' + socket.hostObj.hostName + ' established.');
+    logger.debug('Connection to ' + socket.hostObj.hostName + ' established.');
   });
             
   //
   // Handle client connection events
   vost.on('client:end', function(socket){
-    console.log('Client connection ended.');
+    logger.debug('Client connection ended.');
   });
   vost.on('client:close', function(socket){
-    console.log('Client connection close.');
+    logger.debug('Client connection close.');
   });
   vost.on('client:error', function(socket, err){
-    console.log('Client connection error:', err);
+    logger.debug('Client connection error:', err);
   });
   vost.on('client:timeout', function(socket){
-    console.log('Client connection timed out.');
+    logger.debug('Client connection timed out.');
   });
 
   // Host not found
   vost.on('client:no-host', function(hostName){
-    console.log('Requested host not found:', hostName);
+    logger.debug('Requested host not found:', hostName);
   });
 }
 
 // Output memory stats every now and then
 if(settings.traceMemory === true){
   setInterval(function(){
-    console.log('Memory:', process.memoryUsage());
-  }, 1000);
+    logger.info('Memory:', process.memoryUsage());
+  }, settings.traceMemoryInterval);
 }
 
 // Catch process exceptions that bubble up
 process.on('uncaughtException', function (err) {
   if(settings.debug === true)
-    console.log('Caught exception: ', err.stack);
+    logger.debug('Caught exception: ', err.stack);
 });
 
 // Start Server
