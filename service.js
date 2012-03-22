@@ -50,16 +50,16 @@ if(settings.debug === true){
   //
   // Handle client connection events
   vost.on('client:end', function(socket){
-    console.log('Client connection from', socket.address(), 'ended.');
+    console.log('Client connection ended.');
   });
   vost.on('client:close', function(socket){
-    console.log('Client connection from', socket.address(), 'close.');
+    console.log('Client connection close.');
   });
   vost.on('client:error', function(socket, err){
-    console.log('Client connection from', socket.address(), 'error:', err);
+    console.log('Client connection error:', err);
   });
-  vost.on('client:error', function(socket){
-    console.log('Client connection from', socket.address(), ' timed out.');
+  vost.on('client:timeout', function(socket){
+    console.log('Client connection timed out.');
   });
 
   // Host not found
@@ -67,6 +67,19 @@ if(settings.debug === true){
     console.log('Requested host not found:', hostName);
   });
 }
+
+// Output memory stats every now and then
+if(settings.traceMemory === true){
+  setInterval(function(){
+    console.log('Memory:', process.memoryUsage());
+  }, 1000);
+}
+
+// Catch process exceptions that bubble up
+process.on('uncaughtException', function (err) {
+  if(settings.debug === true)
+    console.log('Caught exception: ', err.stack);
+});
 
 // Start Server
 vost.listen(settings.port);
