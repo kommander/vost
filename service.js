@@ -15,7 +15,7 @@ var Helper = require('./lib/helper.js');
 // Default settings
 var settings = {
   port: 80,
-  logLevel: 'debug',
+  logLevel: 'warn',
   logFile: null,
   traceMemory: false,
   traceMemoryInterval: 1000
@@ -30,49 +30,61 @@ if(Path.existsSync(__dirname + '/config.js')){
 // Create Logger isntance
 var logger = require('./lib/logger.js').createLogger(settings.logFile, settings.logLevel);
 
+// Load mailer module if mail settings are available
+if(typeof settings.mail !== 'undefined'){
+  try {
+    var mailer = require('mailer');
+  } catch(e){
+    throw new Error('Mail configuration set, but could not load mailer module. (npm install mailer)');
+  }
+}
+
+
 // Create a vost instance
 var vost = new Vost(settings);
 
-// Create Debug output if wanted
-if(settings.logLevel === 'debug'){
-  //
-  // Handle target connection events
-  vost.on('target:close', function(socket){
-    logger.debug('Target connection to ' + socket.hostObj.hostName + ' closed.');
-  });
-  vost.on('target:end', function(socket){
-    logger.debug('Target connection to ' + socket.hostObj.hostName + ' ended.');
-  });
-  vost.on('target:error', function(socket, err){
-    logger.debug('Target connection to ' + socket.hostObj.hostName + ' error:', err);
-  });
-  vost.on('target:timeout', function(socket){
-    logger.debug('Target connection to ' + socket.hostObj.hostName + ' timed out.');
-  });
-  vost.on('target:connect', function(socket){
-    logger.debug('Connection to ' + socket.hostObj.hostName + ' established.');
-  });
-            
-  //
-  // Handle client connection events
-  vost.on('client:end', function(socket){
-    logger.debug('Client connection ended.');
-  });
-  vost.on('client:close', function(socket){
-    logger.debug('Client connection close.');
-  });
-  vost.on('client:error', function(socket, err){
-    logger.debug('Client connection error:', err);
-  });
-  vost.on('client:timeout', function(socket){
-    logger.debug('Client connection timed out.');
-  });
+//
+// Handle target connection events
+vost.on('target:close', function(socket){
+  logger.debug('Target connection to ' + socket.hostObj.hostName + ':' + socket.hostObj.port + ' closed.');
+});
+vost.on('target:end', function(socket){
+  logger.debug('Target connection to ' + socket.hostObj.hostName + ':' + socket.hostObj.port + ' ended.');
+});
+vost.on('target:error', function(socket, err){
+  logger.error('Target connection to ' + socket.hostObj.hostName + ':' + socket.hostObj.port + ' error:', err);
+});
+vost.on('target:timeout', function(socket){
+  logger.warn('Target connection to ' + socket.hostObj.hostName + ':' + socket.hostObj.port + ' timed out.');
+});
+vost.on('target:connect', function(socket){
+  logger.debug('Connection to ' + socket.hostObj.hostName + ':' + socket.hostObj.port + ' established.');
+});
+          
+//
+// Handle client connection events
+vost.on('client:end', function(socket){
+  logger.debug('Client connection ended.');
+});
+vost.on('client:close', function(socket){
+  logger.debug('Client connection close.');
+});
+vost.on('client:error', function(socket, err){
+  logger.error('Client connection error:', err);
+});
+vost.on('client:timeout', function(socket){
+  logger.warn('Client connection timed out.');
+});
 
-  // Host not found
-  vost.on('client:no-host', function(hostName){
-    logger.debug('Requested host not found:', hostName);
-  });
-}
+// Host not found
+vost.on('host:not-found', function(hostName){
+  logger.debug('Requested host not found:', hostName);
+});
+
+// Host down
+vost.on('host:down', function(hostObj){
+  logger.warn('Host ' + hostObj.hostName + ':' + hostObj.port + ' down.');
+});
 
 // Output memory stats every now and then
 if(settings.traceMemory === true){
