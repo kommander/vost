@@ -10,6 +10,7 @@ var howMany = 10000;
 var delay = 5;
 var counter = 0;
 var _currentDelay = 0;
+var startTime = Date.now();
 
 console.log('Sending ' + howMany + ' requests to ' + host + ':' + port);
 
@@ -34,7 +35,7 @@ for(var i = 0; i < howMany; i++){
         util.print('.');
         counter++;
         if(counter == howMany){
-          console.log('Done.');
+          console.log('\nDone. Got ' + howMany + ' requests answered in ' + Math.round(Date.now() - startTime) + ' ms.');
         }
       });
     });
