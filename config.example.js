@@ -2,6 +2,7 @@
  * An example configuration for Vost
  */ 
 module.exports = {
+  port: 80,
   hosts: [
     {
       domain: 'subdomain.yourname.com', // OR: ['subdomain1.yourname.com', 'subdomain2.yourname.com']
@@ -10,5 +11,10 @@ module.exports = {
   ],
   retriesToDown: 3,
   targetRetryDelay: 5, // sec.
-  delayAfterDown: 60 // sec.
+  delayAfterDown: 60, // sec.
+  message404: 'host not found.',
+  logLevel: 'debug',
+  logFile: null,
+  traceMemory: false,
+  traceMemoryInterval: 1000
 };
