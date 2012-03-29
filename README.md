@@ -7,6 +7,11 @@ Repo: https://github.com/kommander/vost
 
 ### Configuration
 A configuration file for the service is by default expected at _vost/config.js_.
+To find out more about the configuration parameters, have a look at  _vost/config.example.js_.
+
+#### Proxy Hosts
+The _hosts_ configuration expects an Array with host objects.
+A host reacts on a domain and proxies traffic to one of the specified _targets_
 <pre>
 module.exports = {
   hosts: [
@@ -14,10 +19,21 @@ module.exports = {
       domain: 'subdomain.yourname.com', // OR: ['subdomain1.yourname.com', 'subdomain2.yourname.com']
       target: 'localhost:8080' // OR: ['target1:8080', 'target2:8080']
     }
-  ],
-  retriesToDown: 3,
-  targetRetryDelay: 5, // sec.
-  delayAfterDown: 60 // sec.
+  ]
+};
+
+#### Redirect Hosts
+A request for a host can be automatically redirected to another domain,
+by specifying a redirect instead of a target. Redirect targets can also be balanced,
+by spreading requests equally over them.
+<pre>
+module.exports = {
+  hosts: [
+    {
+      domain: 'subdomain.yourname.com', // OR: ['subdomain1.yourname.com', 'subdomain2.yourname.com']
+      redirect: 'www.somethingelse.com' // OR: ['www1.somethingelse.comm', 'www2.somethingelse.com']
+    }
+  ]
 };
 </pre>
 

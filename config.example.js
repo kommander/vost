@@ -14,15 +14,23 @@ module.exports = {
     }
   ],
 
-  retriesToDown: 3,
-  targetRetryDelay: 5, // sec.
-  delayAfterDown: 60, // sec.
-  message404: 'host not found.',
+  retriesToDown: 3, // Mark host as down after this number of retries
+  targetRetryDelay: 5, // sec. - wait before retrying to connect host
+  
+  message404: 'host not found.', // Host not setup
+  message503: 'host unavailable.', // Host not reachable
+
+  // Logger used in service.js
   logLevel: 'debug',
   logFile: null,
+
+  // For debugging, this will info log the memory usage in given interval
   traceMemory: false,
   traceMemoryInterval: 1000,
-  mail: { // If mail settings are given, an E-Mail can be sent on specific events
+
+  // If mail settings are given, an E-Mail can be sent on specific events
+  // Install node-mailer to use E-Mail notifications (npm install mailer)
+  mail: { 
     host: 'smtp.gmail.com',
     port: 465,
     ssl: true,
@@ -30,8 +38,11 @@ module.exports = {
     password: '',
     from: ''
   },
+
+  // An E-Mail will only be sent if the following settings are given
+  // The E-Mail will contain the target information from the settings
   mailOnHostDown: {
-    to: ['name1@domain.com', 'name2@domain.com'],
+    to: ['name1@domain.com', 'name2@domain.com'], // Always an array
     subject: 'Test server down'
   }
 };
