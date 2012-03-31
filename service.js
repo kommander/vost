@@ -15,6 +15,7 @@ var Helper = require('./lib/helper.js');
 // Default settings
 var settings = {
   port: 80,
+  sslPort: 443,
   logLevel: 'warn',
   logFile: null,
   traceMemory: false,
@@ -124,4 +125,4 @@ process.on('uncaughtException', function (err) {
 });
 
 // Start Server
-vost.listen(settings.port);
+vost.listen(settings.port, settings.sslPort);

@@ -3,3 +3,6 @@ node_modules
 config.js
 *.sublime-project
 *.sublime-workspace
+*.key
+*.csr
+*.pem

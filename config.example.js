@@ -4,6 +4,13 @@
 module.exports = {
   port: 80,
 
+  // TLS Server settings (see http://nodejs.org/api/tls.html#tls_class_tls_server)
+  sslPort: 443,
+  ssl: {
+    key: fs.readFileSync('./server-key.pem'),
+    cert: fs.readFileSync('./server-cert.pem')
+  }
+
   //
   // Setup hosts
 
