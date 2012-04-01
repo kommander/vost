@@ -21,6 +21,7 @@ module.exports = {
     }
   ]
 };
+</pre>
 
 #### Redirect Hosts
 A request for a host can be automatically redirected to another domain,
