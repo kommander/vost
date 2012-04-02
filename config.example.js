@@ -58,5 +58,16 @@ module.exports = {
   mailOnHostDown: {
     to: ['name1@domain.com', 'name2@domain.com'], // Always an array
     subject: 'Test server down'
+  },
+
+  parseTargetStatus: false,
+
+  // If parseTargetStatus is set to true, the service will attempt to inform you by email
+  // if the following is set
+  mailOnStatus: {
+    on: [500], // Array with status codes to send an email on
+    to: ['name1@domain.com', 'name2@domain.com'], // Always an array
+    subject: 'Test server error',
+    delay: 3600 // Wait so many seconds before sending next status mail, default 3600
   }
 };

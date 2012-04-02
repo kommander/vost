@@ -26,6 +26,7 @@ for(var i = 0; i < settings.ports.length; i++){
   var server = http.createServer((function(port){
     return function(req, res) {
 	    console.log('Received request for: ', req.headers.host, req.url, '@', port);
+      //res.statusCode = 500;
 	    res.end('Here I am. (' + req.headers.host + req.url + ' @ ' + port + ')');
     };
 	})(port));

@@ -19,8 +19,16 @@ var settings = {
   logLevel: 'warn',
   logFile: null,
   traceMemory: false,
-  traceMemoryInterval: 1000
+  traceMemoryInterval: 1000,
+  mailOnStatus: {
+    delay: 3600 // Seconds
+  }
 };
+
+// E-Mail State
+var mailing = {
+  lastStatusMail: 0
+}
 
 // Load settings
 if(Path.existsSync(__dirname + '/config.js')){
@@ -44,6 +52,25 @@ if(typeof settings.mail !== 'undefined'){
 // Create a vost instance
 var vost = new Vost(settings);
 
+function sendmail(to, subject, body){
+  mailer.send({
+    host : settings.mail.host,
+    port : settings.mail.port, 
+    ssl: settings.mail.ssl,
+    domain : "localhost", 
+    to : to,
+    from : settings.mail.from,
+    subject : subject,
+    body: body,
+    authentication : "login", 
+    username : settings.mail.username,
+    password : settings.mail.password
+  }, function(err){
+    if(err)
+      logger.error(err);
+  });
+}
+
 //
 // Handle target connection events
 vost.on('target:close', function(socket){
@@ -65,6 +92,23 @@ vost.on('target:timeout', function(socket){
 vost.on('target:connect', function(socket){
   var targetHost = socket.targets[socket.selectedTarget];
   logger.debug('Connection to ' + targetHost.hostName + ':' + targetHost.port + ' established.');
+});
+vost.on('target:status', function(socket, status){
+  var targetHost = socket.targets[socket.selectedTarget];
+  logger.debug('Connection to ' + targetHost.hostName + ':' + targetHost.port + ' returned status: ' + status);
+
+  // Send out status E-Mail if setup
+  if(settings.mailOnStatus.on
+    && settings.mailOnStatus.on.indexOf(status) != -1
+    && Date.now() - mailing.lastStatusMail > settings.mailOnStatus.delay * 1000){
+    sendmail(
+      settings.mailOnStatus.to.join(','),
+      settings.mailOnStatus.subject || 'Vost: Target Host Error',
+      'The target host ' + targetHost.hostName + ':' + targetHost.port + ' returned a status of 500 Server Error.'
+    );
+    mailing.lastStatusMail = Date.now();
+  }
+
 });
           
 //
@@ -93,25 +137,11 @@ vost.on('host:down', function(targetHost){
 
   // Send out E-Mail if setup
   if(settings.mailOnHostDown){
-
-    var body = 'The target host ' + targetHost.hostName + ':' + targetHost.port + ' is down.';
-
-    mailer.send({
-      host : settings.mail.host,
-      port : settings.mail.port, 
-      ssl: settings.mail.ssl,
-      domain : "localhost", 
-      to : settings.mailOnHostDown.to.join(','),
-      from : settings.mail.from,
-      subject : settings.mailOnHostDown.subject || 'Vost: Virtual Host Down',
-      body: body,
-      authentication : "login", 
-      username : settings.mail.username,
-      password : settings.mail.password
-    }, function(err){
-      if(err)
-        logger.error(err);
-    });
+    sendmail(
+      settings.mailOnHostDown.to.join(','),
+      settings.mailOnHostDown.subject || 'Vost: Virtual Host Down',
+      'The target host ' + targetHost.hostName + ':' + targetHost.port + ' is down.'
+    );
   }
 
 });
