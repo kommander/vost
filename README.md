@@ -5,6 +5,13 @@ License: MIT
 Author: https://github.com/kommander
 Repo: https://github.com/kommander/vost
 
+### Features
+* Simple Setup
+* Load Balancing
+* Redirects
+* SSL
+* Host Event E-Mail Notifications
+
 ### Configuration
 A configuration file for the service is by default expected at _vost/config.js_.
 To find out more about the configuration parameters, have a look at  _vost/config.example.js_.
