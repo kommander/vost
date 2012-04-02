@@ -27,7 +27,8 @@ module.exports = {
     }
   ],
 
-  retriesToDown: 3, // Mark host as down after this number of retries
+  failsToDown: 3, // Mark host as down after this number of retries
+  maxRetries: 3, // Try reconnect the target host this often
   targetRetryDelay: 5, // sec. - wait before retrying to connect host
   
   message404: 'host not found.', // Host not setup
