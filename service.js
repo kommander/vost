@@ -47,19 +47,24 @@ var vost = new Vost(settings);
 //
 // Handle target connection events
 vost.on('target:close', function(socket){
-  logger.debug('Target connection to ' + socket.hostObj.hostName + ':' + socket.hostObj.port + ' closed.');
+  var targetHost = socket.targets[socket.selectedTarget];
+  logger.debug('Target connection to ' + targetHost.hostName + ':' + targetHost.port + ' closed.');
 });
 vost.on('target:end', function(socket){
-  logger.debug('Target connection to ' + socket.hostObj.hostName + ':' + socket.hostObj.port + ' ended.');
+  var targetHost = socket.targets[socket.selectedTarget];
+  logger.debug('Target connection to ' + targetHost.hostName + ':' + targetHost.port + ' ended.');
 });
 vost.on('target:error', function(socket, err){
-  logger.error('Target connection to ' + socket.hostObj.hostName + ':' + socket.hostObj.port + ' error:', err);
+  var targetHost = socket.targets[socket.selectedTarget];
+  logger.error('Target connection to ' + targetHost.hostName + ':' + targetHost.port + ' error:', err);
 });
 vost.on('target:timeout', function(socket){
-  logger.warn('Target connection to ' + socket.hostObj.hostName + ':' + socket.hostObj.port + ' timed out.');
+  var targetHost = socket.targets[socket.selectedTarget];
+  logger.warn('Target connection to ' + targetHost.hostName + ':' + targetHost.port + ' timed out.');
 });
 vost.on('target:connect', function(socket){
-  logger.debug('Connection to ' + socket.hostObj.hostName + ':' + socket.hostObj.port + ' established.');
+  var targetHost = socket.targets[socket.selectedTarget];
+  logger.debug('Connection to ' + targetHost.hostName + ':' + targetHost.port + ' established.');
 });
           
 //
@@ -83,13 +88,13 @@ vost.on('host:not-found', function(hostName){
 });
 
 // Host down
-vost.on('host:down', function(hostObj){
-  logger.warn('Host ' + hostObj.hostName + ':' + hostObj.port + ' down.');
+vost.on('host:down', function(targetHost){
+  logger.warn('Host ' + targetHost.hostName + ':' + targetHost.port + ' down.');
 
   // Send out E-Mail if setup
   if(settings.mailOnHostDown){
 
-    var body = 'The target host ' + hostObj.hostName + ':' + hostObj.port + ' is down.';
+    var body = 'The target host ' + targetHost.hostName + ':' + targetHost.port + ' is down.';
 
     mailer.send({
       host : settings.mail.host,
