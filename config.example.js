@@ -17,13 +17,13 @@ module.exports = {
   hosts: [
     // Virtual
     {
-      domain: 'subdomain.yourname.com', // OR: ['subdomain1.yourname.com', 'subdomain2.yourname.com']
+      domain: 'subdomain.yourname.com', // OR: ['subdomain1.domain1.com', '*.domain2.com']
       target: 'localhost:8080' // OR: ['target1:8080', 'target2:8080']
     },
     // Redirect
     {
-      domain: 'subdomain.yourname.com', // Same as above
-      redirect: 'http://yro.sl.lo:9001' // Full URL redirect location
+      domain: '*.yourname.com', // Same as above
+      redirect: 'http://www.otherhost.com' // Full URL redirect location
     }
   ],
 
