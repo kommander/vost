@@ -32,14 +32,13 @@ module.exports = {
 
 #### Redirect Hosts
 A request for a host can be automatically redirected to another domain,
-by specifying a redirect instead of a target. Redirect targets can also be balanced,
-by spreading requests equally over them.
+by specifying a redirect instead of a target.
 <pre>
 module.exports = {
   hosts: [
     {
       domain: 'subdomain.yourname.com', // OR: ['subdomain1.yourname.com', 'subdomain2.yourname.com']
-      redirect: 'www.somethingelse.com' // OR: ['www1.somethingelse.comm', 'www2.somethingelse.com']
+      redirect: 'http://www.somethingelse.com' // Include the protocol in the URL
     }
   ]
 };
