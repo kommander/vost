@@ -31,6 +31,7 @@ var mailing = {
 }
 
 // Load settings
+// TODO: take path to config file from command line arguments
 if(Path.existsSync(__dirname + '/config.js')){
   var fileSettings = require(__dirname + '/config.js');
   Helper.mergeObjects(settings, fileSettings);
