@@ -6,3 +6,4 @@ config.js
 *.key
 *.csr
 *.pem
+*.html
