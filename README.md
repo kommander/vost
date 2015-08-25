@@ -1,3 +1,5 @@
+_NOTICE:_ This repository is not maintained and was a mere proof of concept back in the days. I am happy if it helps anyone, but do not consider it a working module.
+
 # Vost
 ### A simple vHost-Proxy & Load Balancer
 
